@@ -1,0 +1,22 @@
+# Credentials and captures contain reusable access tokens and health data.
+.env*
+!.env.example
+captures/**
+!captures/**/
+!captures/**/.gitkeep
+
+# Generated local artifacts.
+__pycache__/
+.venv/
+.DS_Store
+build/android/
+*.apk
+*.apks
+*.keystore
+.mypy_cache/
+.pytest_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+dist/
+*.egg-info/

@@ -1,0 +1,51 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": ["config:recommended", ":dependencyDashboard"],
+  "timezone": "America/Los_Angeles",
+  "schedule": ["before 6am on friday"],
+  "labels": ["dependencies"],
+  "semanticCommits": "enabled",
+  "semanticCommitType": "chore",
+  "semanticCommitScope": "deps",
+  "minimumReleaseAge": "5 days",
+  "rangeStrategy": "widen",
+  "separateMinorPatch": false,
+  "prHourlyLimit": 0,
+  "prConcurrentLimit": 5,
+  "automerge": true,
+  "automergeType": "pr",
+  "automergeStrategy": "squash",
+  "platformAutomerge": false,
+  "constraints": {"python": ">=3.11"},
+  "lockFileMaintenance": {
+    "enabled": true,
+    "schedule": ["before 6am on the first day of the month"]
+  },
+  "vulnerabilityAlerts": {
+    "enabled": true,
+    "labels": ["security"],
+    "minimumReleaseAge": null,
+    "schedule": ["at any time"]
+  },
+  "osvVulnerabilityAlerts": true,
+  "ignorePaths": ["**/.venv/**", "build/**", "captures/**"],
+  "packageRules": [
+    {
+      "description": "Major updates require explicit review.",
+      "matchUpdateTypes": ["major"],
+      "dependencyDashboardApproval": true,
+      "automerge": false,
+      "addLabels": ["major"]
+    },
+    {
+      "description": "Group Python quality and test tooling.",
+      "matchPackageNames": ["mypy", "openapi-spec-validator", "pytest", "pytest-cov", "ruff"],
+      "groupName": "python tooling"
+    },
+    {
+      "description": "Group GitHub Actions updates.",
+      "matchManagers": ["github-actions"],
+      "groupName": "github actions"
+    }
+  ]
+}

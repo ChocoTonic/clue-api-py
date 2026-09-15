@@ -1,0 +1,2083 @@
+{
+  "components": {
+    "responses": {
+      "AuthenticationError": {
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/Error"
+            }
+          }
+        },
+        "description": "Credentials or token rejected"
+      },
+      "NotFoundError": {
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/Error"
+            }
+          }
+        },
+        "description": "Resource or state-dependent endpoint unavailable"
+      }
+    },
+    "schemas": {
+      "Error": {
+        "additionalProperties": true,
+        "properties": {
+          "error": {
+            "type": "string"
+          },
+          "path": {
+            "type": "string"
+          },
+          "status": {
+            "type": "integer"
+          },
+          "timestamp": {
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "LoginRequest": {
+        "additionalProperties": false,
+        "properties": {
+          "email": {
+            "format": "email",
+            "type": "string"
+          },
+          "password": {
+            "format": "password",
+            "type": "string",
+            "writeOnly": true
+          }
+        },
+        "required": [
+          "email",
+          "password"
+        ],
+        "type": "object"
+      },
+      "LoginResponse": {
+        "additionalProperties": true,
+        "properties": {
+          "access_token": {
+            "readOnly": true,
+            "type": "string"
+          },
+          "analytics_id": {
+            "type": "string"
+          },
+          "user": {
+            "additionalProperties": true,
+            "type": "object"
+          }
+        },
+        "required": [
+          "access_token",
+          "user"
+        ],
+        "type": "object"
+      }
+    },
+    "securitySchemes": {
+      "tokenAuth": {
+        "description": "Prefix the access token with `Token `.",
+        "in": "header",
+        "name": "Authorization",
+        "type": "apiKey"
+      }
+    }
+  },
+  "info": {
+    "description": "Evidence-backed contract for the undocumented Clue API. The x-clue-evidence extension distinguishes live observations from state-dependent and APK-only declarations.",
+    "title": "Unofficial Clue Period Tracker API",
+    "version": "0.2.0"
+  },
+  "openapi": "3.1.0",
+  "paths": {
+    "/access-tokens": {
+      "post": {
+        "operationId": "createAccessToken",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LoginRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LoginResponse"
+                }
+              }
+            },
+            "description": "Access token created"
+          },
+          "401": {
+            "$ref": "#/components/responses/AuthenticationError"
+          }
+        },
+        "summary": "Log in with email and password",
+        "x-clue-evidence": {
+          "androidAppVersion": "269.1",
+          "historicalDocumentation": true,
+          "level": "apk-only"
+        }
+      }
+    },
+    "/users/{user_id}": {
+      "get": {
+        "operationId": "getUserById",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "user_id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "properties": {
+                    "user": {}
+                  },
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful response"
+          },
+          "401": {
+            "$ref": "#/components/responses/AuthenticationError"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFoundError"
+          }
+        },
+        "security": [
+          {
+            "tokenAuth": []
+          }
+        ],
+        "summary": "Get the current user's legacy user envelope",
+        "x-clue-evidence": {
+          "androidAppVersion": "269.1",
+          "level": "live",
+          "observedOn": "2026-09-15",
+          "observedStatus": 200
+        }
+      }
+    },
+    "/v1/analysis/bbt": {
+      "get": {
+        "operationId": "getBbtAnalysis",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "properties": {
+                    "cycles": {},
+                    "nextCursor": {}
+                  },
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful response"
+          },
+          "401": {
+            "$ref": "#/components/responses/AuthenticationError"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFoundError"
+          }
+        },
+        "security": [
+          {
+            "tokenAuth": []
+          }
+        ],
+        "summary": "Get basal-body-temperature analysis",
+        "x-clue-evidence": {
+          "androidAppVersion": "269.1",
+          "level": "live",
+          "observedOn": "2026-09-15",
+          "observedStatus": 200
+        }
+      }
+    },
+    "/v1/analysis/body-metrics": {
+      "get": {
+        "operationId": "getBodyMetrics",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "properties": {
+                    "bmi": {},
+                    "height": {},
+                    "weightMeasurement": {}
+                  },
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful response"
+          },
+          "401": {
+            "$ref": "#/components/responses/AuthenticationError"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFoundError"
+          }
+        },
+        "security": [
+          {
+            "tokenAuth": []
+          }
+        ],
+        "summary": "Get body metrics",
+        "x-clue-evidence": {
+          "androidAppVersion": "269.1",
+          "level": "live",
+          "observedOn": "2026-09-15",
+          "observedStatus": 200
+        }
+      }
+    },
+    "/v1/analysis/delta-temperature": {
+      "get": {
+        "operationId": "getDeltaTemperatureAnalysis",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "source",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "properties": {
+                    "cycles": {},
+                    "nextCursor": {}
+                  },
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful response"
+          },
+          "401": {
+            "$ref": "#/components/responses/AuthenticationError"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFoundError"
+          }
+        },
+        "security": [
+          {
+            "tokenAuth": []
+          }
+        ],
+        "summary": "Get delta-temperature analysis",
+        "x-clue-evidence": {
+          "androidAppVersion": "269.1",
+          "level": "live",
+          "observedOn": "2026-09-15",
+          "observedStatus": 200
+        }
+      }
+    },
+    "/v1/analysis/heart-rate-variability": {
+      "get": {
+        "operationId": "getHeartRateVariabilityAnalysis",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "source",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "properties": {
+                    "cycles": {},
+                    "nextCursor": {}
+                  },
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful response"
+          },
+          "401": {
+            "$ref": "#/components/responses/AuthenticationError"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFoundError"
+          }
+        },
+        "security": [
+          {
+            "tokenAuth": []
+          }
+        ],
+        "summary": "Get heart-rate-variability analysis",
+        "x-clue-evidence": {
+          "androidAppVersion": "269.1",
+          "level": "live",
+          "observedOn": "2026-09-15",
+          "observedStatus": 200
+        }
+      }
+    },
+    "/v1/analysis/resting-heart-rate": {
+      "get": {
+        "operationId": "getRestingHeartRateAnalysis",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "source",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "properties": {
+                    "cycles": {},
+                    "nextCursor": {}
+                  },
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful response"
+          },
+          "401": {
+            "$ref": "#/components/responses/AuthenticationError"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFoundError"
+          }
+        },
+        "security": [
+          {
+            "tokenAuth": []
+          }
+        ],
+        "summary": "Get resting-heart-rate analysis",
+        "x-clue-evidence": {
+          "androidAppVersion": "269.1",
+          "level": "live",
+          "observedOn": "2026-09-15",
+          "observedStatus": 200
+        }
+      }
+    },
+    "/v1/analysis/skin-temperature": {
+      "get": {
+        "operationId": "getSkinTemperatureAnalysis",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "source",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "properties": {
+                    "cycles": {},
+                    "nextCursor": {}
+                  },
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful response"
+          },
+          "401": {
+            "$ref": "#/components/responses/AuthenticationError"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFoundError"
+          }
+        },
+        "security": [
+          {
+            "tokenAuth": []
+          }
+        ],
+        "summary": "Get skin-temperature analysis",
+        "x-clue-evidence": {
+          "androidAppVersion": "269.1",
+          "level": "live",
+          "observedOn": "2026-09-15",
+          "observedStatus": 200
+        }
+      }
+    },
+    "/v1/analysis/sleep-duration": {
+      "get": {
+        "operationId": "getSleepDurationAnalysis",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "source",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "properties": {
+                    "cycles": {},
+                    "nextCursor": {}
+                  },
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful response"
+          },
+          "401": {
+            "$ref": "#/components/responses/AuthenticationError"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFoundError"
+          }
+        },
+        "security": [
+          {
+            "tokenAuth": []
+          }
+        ],
+        "summary": "Get sleep-duration analysis",
+        "x-clue-evidence": {
+          "androidAppVersion": "269.1",
+          "level": "live",
+          "observedOn": "2026-09-15",
+          "observedStatus": 200
+        }
+      }
+    },
+    "/v1/analysis/weight": {
+      "get": {
+        "operationId": "getWeightAnalysis",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "limit",
+            "required": false,
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "in": "query",
+            "name": "cursor",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "source",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "properties": {
+                    "cycles": {},
+                    "nextCursor": {}
+                  },
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful response"
+          },
+          "401": {
+            "$ref": "#/components/responses/AuthenticationError"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFoundError"
+          }
+        },
+        "security": [
+          {
+            "tokenAuth": []
+          }
+        ],
+        "summary": "Get paginated weight analysis",
+        "x-clue-evidence": {
+          "androidAppVersion": "269.1",
+          "level": "live",
+          "observedOn": "2026-09-15",
+          "observedStatus": 200
+        }
+      }
+    },
+    "/v1/authentication-methods": {
+      "get": {
+        "operationId": "getAuthenticationMethods",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "properties": {
+                    "authentication": {}
+                  },
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful response"
+          },
+          "401": {
+            "$ref": "#/components/responses/AuthenticationError"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFoundError"
+          }
+        },
+        "security": [
+          {
+            "tokenAuth": []
+          }
+        ],
+        "summary": "Get enabled authentication methods",
+        "x-clue-evidence": {
+          "androidAppVersion": "269.1",
+          "level": "live",
+          "observedOn": "2026-09-15",
+          "observedStatus": 200
+        }
+      }
+    },
+    "/v1/birth-control/settings": {
+      "get": {
+        "operationId": "getBirthControlSettings",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "properties": {
+                    "settings": {}
+                  },
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful response"
+          },
+          "401": {
+            "$ref": "#/components/responses/AuthenticationError"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFoundError"
+          }
+        },
+        "security": [
+          {
+            "tokenAuth": []
+          }
+        ],
+        "summary": "Get birth-control settings",
+        "x-clue-evidence": {
+          "androidAppVersion": "269.1",
+          "level": "live",
+          "observedOn": "2026-09-15",
+          "observedStatus": 200
+        }
+      }
+    },
+    "/v1/birth-control/spec": {
+      "get": {
+        "operationId": "getBirthControlSpec",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "properties": {
+                    "typeOptions": {}
+                  },
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful response"
+          },
+          "401": {
+            "$ref": "#/components/responses/AuthenticationError"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFoundError"
+          }
+        },
+        "security": [
+          {
+            "tokenAuth": []
+          }
+        ],
+        "summary": "Get birth-control option metadata",
+        "x-clue-evidence": {
+          "androidAppVersion": "269.1",
+          "level": "live",
+          "observedOn": "2026-09-15",
+          "observedStatus": 200
+        }
+      }
+    },
+    "/v1/calendar": {
+      "get": {
+        "operationId": "getCalendar",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "startDate",
+            "required": true,
+            "schema": {
+              "format": "date",
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "endDate",
+            "required": true,
+            "schema": {
+              "format": "date",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "properties": {
+                    "days": {},
+                    "maxCalendarDate": {},
+                    "periodConfirmation": {}
+                  },
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful response"
+          },
+          "401": {
+            "$ref": "#/components/responses/AuthenticationError"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFoundError"
+          }
+        },
+        "security": [
+          {
+            "tokenAuth": []
+          }
+        ],
+        "summary": "Get calendar days in a date range",
+        "x-clue-evidence": {
+          "androidAppVersion": "269.1",
+          "level": "live",
+          "observedOn": "2026-09-15",
+          "observedStatus": 200
+        }
+      }
+    },
+    "/v1/calendar/connections/{code}": {
+      "get": {
+        "operationId": "getConnectionCalendar",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "code",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "startDate",
+            "required": true,
+            "schema": {
+              "format": "date",
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "endDate",
+            "required": true,
+            "schema": {
+              "format": "date",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "properties": {},
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful response"
+          },
+          "401": {
+            "$ref": "#/components/responses/AuthenticationError"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFoundError"
+          }
+        },
+        "security": [
+          {
+            "tokenAuth": []
+          }
+        ],
+        "summary": "Get a shared calendar by connection code",
+        "x-clue-evidence": {
+          "androidAppVersion": "269.1",
+          "level": "apk-only"
+        }
+      }
+    },
+    "/v1/chatbot": {
+      "get": {
+        "operationId": "getChatbotHistory",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {},
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful response"
+          },
+          "401": {
+            "$ref": "#/components/responses/AuthenticationError"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFoundError"
+          }
+        },
+        "security": [
+          {
+            "tokenAuth": []
+          }
+        ],
+        "summary": "Get chatbot history",
+        "x-clue-evidence": {
+          "androidAppVersion": "269.1",
+          "level": "live",
+          "observedOn": "2026-09-15",
+          "observedStatus": 200
+        }
+      }
+    },
+    "/v1/community/me": {
+      "get": {
+        "operationId": "getCommunityProfile",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "properties": {
+                    "id": {},
+                    "nickname": {},
+                    "picture_url": {}
+                  },
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful response"
+          },
+          "401": {
+            "$ref": "#/components/responses/AuthenticationError"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFoundError"
+          }
+        },
+        "security": [
+          {
+            "tokenAuth": []
+          }
+        ],
+        "summary": "Get the community profile",
+        "x-clue-evidence": {
+          "androidAppVersion": "269.1",
+          "level": "live",
+          "observedOn": "2026-09-15",
+          "observedStatus": 200
+        }
+      }
+    },
+    "/v1/connections": {
+      "get": {
+        "operationId": "getConnections",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "properties": {
+                    "connections": {}
+                  },
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful response"
+          },
+          "401": {
+            "$ref": "#/components/responses/AuthenticationError"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFoundError"
+          }
+        },
+        "security": [
+          {
+            "tokenAuth": []
+          }
+        ],
+        "summary": "List sharing connections",
+        "x-clue-evidence": {
+          "androidAppVersion": "269.1",
+          "level": "live",
+          "observedOn": "2026-09-15",
+          "observedStatus": 200
+        }
+      }
+    },
+    "/v1/consents": {
+      "get": {
+        "operationId": "getConsents",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "properties": {
+                    "consents": {},
+                    "opt_out_types": {}
+                  },
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful response"
+          },
+          "401": {
+            "$ref": "#/components/responses/AuthenticationError"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFoundError"
+          }
+        },
+        "security": [
+          {
+            "tokenAuth": []
+          }
+        ],
+        "summary": "Get consent settings",
+        "x-clue-evidence": {
+          "androidAppVersion": "269.1",
+          "level": "live",
+          "observedOn": "2026-09-15",
+          "observedStatus": 200
+        }
+      }
+    },
+    "/v1/cycles/analysis": {
+      "get": {
+        "operationId": "getCycleAnalysis",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "properties": {
+                    "cycleLength": {},
+                    "cycleLengthDetails": {},
+                    "cycleVariation": {},
+                    "cycleVariationDetails": {},
+                    "lastCycleLength": {},
+                    "pastCycleLengths": {},
+                    "periodLength": {},
+                    "periodStats": {}
+                  },
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful response"
+          },
+          "401": {
+            "$ref": "#/components/responses/AuthenticationError"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFoundError"
+          }
+        },
+        "security": [
+          {
+            "tokenAuth": []
+          }
+        ],
+        "summary": "Get cycle analysis",
+        "x-clue-evidence": {
+          "androidAppVersion": "269.1",
+          "level": "live",
+          "observedOn": "2026-09-15",
+          "observedStatus": 200
+        }
+      }
+    },
+    "/v1/cycles/analysis/diff": {
+      "get": {
+        "operationId": "getCycleAnalysisDiff",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "properties": {},
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful response"
+          },
+          "401": {
+            "$ref": "#/components/responses/AuthenticationError"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFoundError"
+          }
+        },
+        "security": [
+          {
+            "tokenAuth": []
+          }
+        ],
+        "summary": "Get cycle-analysis changes",
+        "x-clue-evidence": {
+          "androidAppVersion": "269.1",
+          "level": "state-dependent"
+        }
+      }
+    },
+    "/v1/cycles/current": {
+      "get": {
+        "operationId": "getCurrentCycle",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "include-ovarian-phases",
+            "required": false,
+            "schema": {
+              "type": "boolean"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "properties": {
+                    "analysis": {},
+                    "availablePredictions": {},
+                    "birthControlMethod": {},
+                    "cycle": {},
+                    "dailyCategoryGroups": {},
+                    "periodConfirmation": {}
+                  },
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful response"
+          },
+          "401": {
+            "$ref": "#/components/responses/AuthenticationError"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFoundError"
+          }
+        },
+        "security": [
+          {
+            "tokenAuth": []
+          }
+        ],
+        "summary": "Get the current cycle",
+        "x-clue-evidence": {
+          "androidAppVersion": "269.1",
+          "level": "live",
+          "observedOn": "2026-09-15",
+          "observedStatus": 200
+        }
+      }
+    },
+    "/v1/cycles/feelings-analysis": {
+      "get": {
+        "operationId": "getFeelingsAnalysis",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "properties": {
+                    "correlations": {},
+                    "feelingsHeatMap": {},
+                    "ovarianFeelings": {}
+                  },
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful response"
+          },
+          "401": {
+            "$ref": "#/components/responses/AuthenticationError"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFoundError"
+          }
+        },
+        "security": [
+          {
+            "tokenAuth": []
+          }
+        ],
+        "summary": "Get cycle feelings analysis",
+        "x-clue-evidence": {
+          "androidAppVersion": "269.1",
+          "level": "live",
+          "observedOn": "2026-09-15",
+          "observedStatus": 200
+        }
+      }
+    },
+    "/v1/cycles/history": {
+      "get": {
+        "operationId": "getCycleHistory",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "limit",
+            "required": false,
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "in": "query",
+            "name": "cursor",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "properties": {
+                    "cycles": {},
+                    "nextCursor": {}
+                  },
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful response"
+          },
+          "401": {
+            "$ref": "#/components/responses/AuthenticationError"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFoundError"
+          }
+        },
+        "security": [
+          {
+            "tokenAuth": []
+          }
+        ],
+        "summary": "Get paginated cycle history",
+        "x-clue-evidence": {
+          "androidAppVersion": "269.1",
+          "level": "live",
+          "observedOn": "2026-09-15",
+          "observedStatus": 200
+        }
+      }
+    },
+    "/v1/cycles/pain-analysis/{pain_type}": {
+      "get": {
+        "operationId": "getPainAnalysis",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "pain_type",
+            "required": true,
+            "schema": {
+              "enum": [
+                "period_cramps",
+                "lower_back",
+                "breast_tenderness",
+                "headache",
+                "migraine",
+                "migraine_with_aura",
+                "leg",
+                "joint",
+                "vulvar"
+              ],
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "properties": {
+                    "painHistory": {},
+                    "painStatistics": {}
+                  },
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful response"
+          },
+          "401": {
+            "$ref": "#/components/responses/AuthenticationError"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFoundError"
+          }
+        },
+        "security": [
+          {
+            "tokenAuth": []
+          }
+        ],
+        "summary": "Get analysis for a pain type",
+        "x-clue-evidence": {
+          "androidAppVersion": "269.1",
+          "level": "live",
+          "observedOn": "2026-09-15",
+          "observedStatus": 200
+        }
+      }
+    },
+    "/v1/cycles/settings": {
+      "get": {
+        "operationId": "getCycleSettings",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "properties": {
+                    "cycleLengthSettings": {},
+                    "fertilePhaseEnabled": {},
+                    "ovulationPhaseEnabled": {},
+                    "periodLengthSettings": {}
+                  },
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful response"
+          },
+          "401": {
+            "$ref": "#/components/responses/AuthenticationError"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFoundError"
+          }
+        },
+        "security": [
+          {
+            "tokenAuth": []
+          }
+        ],
+        "summary": "Get cycle prediction settings",
+        "x-clue-evidence": {
+          "androidAppVersion": "269.1",
+          "level": "live",
+          "observedOn": "2026-09-15",
+          "observedStatus": 200
+        }
+      }
+    },
+    "/v1/cycles/symptom-predictions/{prediction_type}": {
+      "get": {
+        "operationId": "getSymptomPredictions",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "prediction_type",
+            "required": true,
+            "schema": {
+              "enum": [
+                "cramps",
+                "headache",
+                "lower_back",
+                "breast_tenderness",
+                "migraine",
+                "migraine_with_aura",
+                "leg",
+                "joint",
+                "vulvar"
+              ],
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "properties": {},
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful response"
+          },
+          "401": {
+            "$ref": "#/components/responses/AuthenticationError"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFoundError"
+          }
+        },
+        "security": [
+          {
+            "tokenAuth": []
+          }
+        ],
+        "summary": "Get symptom predictions",
+        "x-clue-evidence": {
+          "androidAppVersion": "269.1",
+          "level": "state-dependent"
+        }
+      }
+    },
+    "/v1/doctor-reports": {
+      "get": {
+        "operationId": "getDoctorReports",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "properties": {
+                    "doctorReports": {},
+                    "eligibility": {}
+                  },
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful response"
+          },
+          "401": {
+            "$ref": "#/components/responses/AuthenticationError"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFoundError"
+          }
+        },
+        "security": [
+          {
+            "tokenAuth": []
+          }
+        ],
+        "summary": "List doctor reports and eligibility",
+        "x-clue-evidence": {
+          "androidAppVersion": "269.1",
+          "level": "live",
+          "observedOn": "2026-09-15",
+          "observedStatus": 200
+        }
+      }
+    },
+    "/v1/doctor-reports/user-details": {
+      "get": {
+        "operationId": "getDoctorReportUserDetails",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "properties": {
+                    "age": {},
+                    "birthControl": {},
+                    "healthConditions": {},
+                    "medication": {},
+                    "name": {}
+                  },
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful response"
+          },
+          "401": {
+            "$ref": "#/components/responses/AuthenticationError"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFoundError"
+          }
+        },
+        "security": [
+          {
+            "tokenAuth": []
+          }
+        ],
+        "summary": "Get user details used in doctor reports",
+        "x-clue-evidence": {
+          "androidAppVersion": "269.1",
+          "level": "live",
+          "observedOn": "2026-09-15",
+          "observedStatus": 200
+        }
+      }
+    },
+    "/v1/doctor-reports/{report_id}/download": {
+      "get": {
+        "operationId": "downloadDoctorReport",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "report_id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/pdf": {
+                "schema": {
+                  "format": "binary",
+                  "type": "string"
+                }
+              }
+            },
+            "description": "Successful response"
+          },
+          "401": {
+            "$ref": "#/components/responses/AuthenticationError"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFoundError"
+          }
+        },
+        "security": [
+          {
+            "tokenAuth": []
+          }
+        ],
+        "summary": "Download a doctor report",
+        "x-clue-evidence": {
+          "androidAppVersion": "269.1",
+          "level": "apk-only"
+        }
+      }
+    },
+    "/v1/initialize": {
+      "get": {
+        "operationId": "initialize",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "properties": {
+                    "actions": {},
+                    "consent": {},
+                    "consent_v2": {},
+                    "features": {},
+                    "productTier": {},
+                    "subscription": {},
+                    "user": {}
+                  },
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful response"
+          },
+          "401": {
+            "$ref": "#/components/responses/AuthenticationError"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFoundError"
+          }
+        },
+        "security": [
+          {
+            "tokenAuth": []
+          }
+        ],
+        "summary": "Get account bootstrap state",
+        "x-clue-evidence": {
+          "androidAppVersion": "269.1",
+          "level": "live",
+          "observedOn": "2026-09-15",
+          "observedStatus": 200
+        }
+      }
+    },
+    "/v1/measurements": {
+      "get": {
+        "operationId": "getMeasurements",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "start",
+            "required": true,
+            "schema": {
+              "format": "date",
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "end",
+            "required": true,
+            "schema": {
+              "format": "date",
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "measurementType",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "properties": {
+                    "measurements": {},
+                    "nextCursor": {}
+                  },
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful response"
+          },
+          "401": {
+            "$ref": "#/components/responses/AuthenticationError"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFoundError"
+          }
+        },
+        "security": [
+          {
+            "tokenAuth": []
+          }
+        ],
+        "summary": "Get measurements in a date range",
+        "x-clue-evidence": {
+          "androidAppVersion": "269.1",
+          "level": "live",
+          "observedOn": "2026-09-15",
+          "observedStatus": 200
+        }
+      }
+    },
+    "/v1/medical-records": {
+      "get": {
+        "operationId": "getMedicalRecords",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "properties": {
+                    "options": {},
+                    "version": {}
+                  },
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful response"
+          },
+          "401": {
+            "$ref": "#/components/responses/AuthenticationError"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFoundError"
+          }
+        },
+        "security": [
+          {
+            "tokenAuth": []
+          }
+        ],
+        "summary": "Get medical-record options",
+        "x-clue-evidence": {
+          "androidAppVersion": "269.1",
+          "level": "live",
+          "observedOn": "2026-09-15",
+          "observedStatus": 200
+        }
+      }
+    },
+    "/v1/notifications": {
+      "get": {
+        "operationId": "getNotifications",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "properties": {},
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful response"
+          },
+          "401": {
+            "$ref": "#/components/responses/AuthenticationError"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFoundError"
+          }
+        },
+        "security": [
+          {
+            "tokenAuth": []
+          }
+        ],
+        "summary": "Get notification settings",
+        "x-clue-evidence": {
+          "androidAppVersion": "269.1",
+          "level": "live",
+          "observedOn": "2026-09-15",
+          "observedStatus": 200
+        }
+      }
+    },
+    "/v1/paywall": {
+      "get": {
+        "operationId": "getPaywall",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "option",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "properties": {
+                    "availableProducts": {},
+                    "entitlements": {},
+                    "productTier": {},
+                    "products": {}
+                  },
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful response"
+          },
+          "401": {
+            "$ref": "#/components/responses/AuthenticationError"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFoundError"
+          }
+        },
+        "security": [
+          {
+            "tokenAuth": []
+          }
+        ],
+        "summary": "Get products and entitlement state",
+        "x-clue-evidence": {
+          "androidAppVersion": "269.1",
+          "level": "live",
+          "observedOn": "2026-09-15",
+          "observedStatus": 200
+        }
+      }
+    },
+    "/v1/pregnancy": {
+      "get": {
+        "operationId": "getPregnancy",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "properties": {},
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful response"
+          },
+          "401": {
+            "$ref": "#/components/responses/AuthenticationError"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFoundError"
+          }
+        },
+        "security": [
+          {
+            "tokenAuth": []
+          }
+        ],
+        "summary": "Get current pregnancy data",
+        "x-clue-evidence": {
+          "androidAppVersion": "269.1",
+          "level": "state-dependent"
+        }
+      }
+    },
+    "/v1/study/enrolled": {
+      "get": {
+        "operationId": "getEnrolledStudies",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "properties": {
+                    "enrolledStudies": {}
+                  },
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful response"
+          },
+          "401": {
+            "$ref": "#/components/responses/AuthenticationError"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFoundError"
+          }
+        },
+        "security": [
+          {
+            "tokenAuth": []
+          }
+        ],
+        "summary": "List enrolled studies",
+        "x-clue-evidence": {
+          "androidAppVersion": "269.1",
+          "level": "live",
+          "observedOn": "2026-09-15",
+          "observedStatus": 200
+        }
+      }
+    },
+    "/v1/study/{study_id}": {
+      "get": {
+        "operationId": "getStudy",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "study_id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "properties": {},
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful response"
+          },
+          "401": {
+            "$ref": "#/components/responses/AuthenticationError"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFoundError"
+          }
+        },
+        "security": [
+          {
+            "tokenAuth": []
+          }
+        ],
+        "summary": "Get a study",
+        "x-clue-evidence": {
+          "androidAppVersion": "269.1",
+          "level": "apk-only"
+        }
+      }
+    },
+    "/v1/takeout": {
+      "get": {
+        "operationId": "getTakeout",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "properties": {
+                    "email": {},
+                    "expiresAt": {},
+                    "password": {},
+                    "userId": {}
+                  },
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful response"
+          },
+          "401": {
+            "$ref": "#/components/responses/AuthenticationError"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFoundError"
+          }
+        },
+        "security": [
+          {
+            "tokenAuth": []
+          }
+        ],
+        "summary": "Get data-takeout credentials",
+        "x-clue-evidence": {
+          "androidAppVersion": "269.1",
+          "level": "live",
+          "observedOn": "2026-09-15",
+          "observedStatus": 200
+        }
+      }
+    },
+    "/v1/tracking/preferences": {
+      "get": {
+        "operationId": "getTrackingPreferences",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "properties": {
+                    "tags": {}
+                  },
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful response"
+          },
+          "401": {
+            "$ref": "#/components/responses/AuthenticationError"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFoundError"
+          }
+        },
+        "security": [
+          {
+            "tokenAuth": []
+          }
+        ],
+        "summary": "Get tracking preferences",
+        "x-clue-evidence": {
+          "androidAppVersion": "269.1",
+          "level": "live",
+          "observedOn": "2026-09-15",
+          "observedStatus": 200
+        }
+      }
+    },
+    "/v1/user": {
+      "get": {
+        "operationId": "getCurrentUser",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "properties": {
+                    "analyticsId": {},
+                    "email": {},
+                    "emailVerified": {},
+                    "firstName": {},
+                    "lastName": {},
+                    "mode": {}
+                  },
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful response"
+          },
+          "401": {
+            "$ref": "#/components/responses/AuthenticationError"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFoundError"
+          }
+        },
+        "security": [
+          {
+            "tokenAuth": []
+          }
+        ],
+        "summary": "Get the current user",
+        "x-clue-evidence": {
+          "androidAppVersion": "269.1",
+          "level": "live",
+          "observedOn": "2026-09-15",
+          "observedStatus": 200
+        }
+      }
+    },
+    "/v1/wearables": {
+      "get": {
+        "operationId": "getWearables",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "properties": {
+                    "wearables": {}
+                  },
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful response"
+          },
+          "401": {
+            "$ref": "#/components/responses/AuthenticationError"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFoundError"
+          }
+        },
+        "security": [
+          {
+            "tokenAuth": []
+          }
+        ],
+        "summary": "List wearable integrations",
+        "x-clue-evidence": {
+          "androidAppVersion": "269.1",
+          "level": "live",
+          "observedOn": "2026-09-15",
+          "observedStatus": 200
+        }
+      }
+    },
+    "/v1/wearables/{provider}": {
+      "get": {
+        "operationId": "getWearable",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "provider",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "properties": {
+                    "connection_status": {},
+                    "integration_provider": {},
+                    "provider": {},
+                    "supported_measurement_types": {}
+                  },
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful response"
+          },
+          "401": {
+            "$ref": "#/components/responses/AuthenticationError"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFoundError"
+          }
+        },
+        "security": [
+          {
+            "tokenAuth": []
+          }
+        ],
+        "summary": "Get a wearable integration",
+        "x-clue-evidence": {
+          "androidAppVersion": "269.1",
+          "level": "live",
+          "observedOn": "2026-09-15",
+          "observedStatus": 200
+        }
+      }
+    }
+  },
+  "servers": [
+    {
+      "url": "https://api.helloclue.com"
+    }
+  ]
+}
