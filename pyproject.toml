@@ -31,12 +31,10 @@ dev = [
   "mypy>=1.13,<2",
   "openapi-spec-validator>=0.7.2,<0.10",
   "pydantic>=2.13.5,<3; python_version >= '3.14'",
-  "pytest>=8,<9",
+  "pytest>=9.0.3,<10",
   "pytest-cov>=6,<8",
   "ruff>=0.8,<1",
 ]
-research = ["mitmproxy>=12.2,<13; python_version >= '3.12'"]
-
 [project.scripts]
 clue-api = "clue_api.__main__:main"
 

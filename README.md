@@ -53,7 +53,7 @@ MITM and APK inspection tools are deliberately separate from the distributable
 library:
 
 ```console
-uv sync --group research
+uv tool install mitmproxy
 ```
 
 Log in and query in one process without storing the password or token:

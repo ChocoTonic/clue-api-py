@@ -2,12 +2,19 @@
 set -eu
 
 project_dir=$(CDPATH= cd -- "$(dirname -- "$0")/.." && pwd)
-mitmweb_bin="$project_dir/.venv/bin/mitmweb"
 listen_host=${MITM_LISTEN_HOST:-127.0.0.1}
 
-if [ ! -x "$mitmweb_bin" ]; then
-  echo "Missing project mitmweb environment." >&2
-  echo "Run: uv venv --python 3.13 .venv && uv pip install --python .venv/bin/python mitmproxy" >&2
+if [ -n "${MITMWEB_BIN:-}" ]; then
+  mitmweb_bin=$MITMWEB_BIN
+elif [ -x "$project_dir/.venv/bin/mitmweb" ]; then
+  mitmweb_bin="$project_dir/.venv/bin/mitmweb"
+else
+  mitmweb_bin=$(command -v mitmweb || true)
+fi
+
+if [ -z "$mitmweb_bin" ] || [ ! -x "$mitmweb_bin" ]; then
+  echo "mitmweb is not installed." >&2
+  echo "Run: uv tool install mitmproxy" >&2
   exit 1
 fi
 

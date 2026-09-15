@@ -16,7 +16,7 @@ To work with local APKs and mitmproxy captures, install the isolated research
 tooling as well:
 
 ```console
-uv sync --group research
+uv tool install mitmproxy
 ```
 
 Never commit captures, credentials, access tokens, APKs, or real health data.
