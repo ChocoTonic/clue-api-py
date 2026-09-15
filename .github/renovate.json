@@ -39,7 +39,7 @@
     },
     {
       "description": "Group Python quality and test tooling.",
-      "matchPackageNames": ["mypy", "openapi-spec-validator", "pytest", "pytest-cov", "ruff"],
+      "matchPackageNames": ["mypy", "openapi-spec-validator", "pydantic", "pytest", "pytest-cov", "ruff"],
       "groupName": "python tooling"
     },
     {
