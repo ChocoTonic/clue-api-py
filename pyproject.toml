@@ -75,5 +75,5 @@ strict = true
 packages = ["clue_api"]
 
 [tool.uv]
-required-version = ">=0.12.15,<0.13"
+required-version = ">=0.13.4"
 default-groups = ["dev"]
