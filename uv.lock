@@ -1,5 +1,5 @@
 version = 1
-revision = 3
+revision = 5
 requires-python = ">=3.11"
 resolution-markers = [
     "python_full_version >= '3.15'",
@@ -74,6 +74,7 @@ name = "clue-api-py"
 version = "0.2.0"
 source = { editable = "." }
 dependencies = [
+    { name = "certifi" },
     { name = "httpx" },
 ]
 
@@ -88,7 +89,10 @@ dev = [
 ]
 
 [package.metadata]
-requires-dist = [{ name = "httpx", specifier = ">=0.27,<1" }]
+requires-dist = [
+    { name = "certifi", specifier = ">=2026.10.19" },
+    { name = "httpx", specifier = ">=0.27,<1" },
+]
 
 [package.metadata.requires-dev]
 dev = [
